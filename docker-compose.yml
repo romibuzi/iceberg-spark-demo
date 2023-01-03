@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  minio:
+    image: minio/minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    entrypoint: sh
+    command: -c 'mkdir -p /data/warehouse && minio server --console-address ":9001" /data'
+
+  postgres:
+    image: postgres:15.1
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: iceberg_db
+    ports:
+      - "5432:5432"
