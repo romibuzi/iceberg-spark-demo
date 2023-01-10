@@ -1,6 +1,7 @@
 package com.romibuzi
 
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.functions.{col, to_date}
+import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.{SparkConf, SparkContext}
 
 object IcebergWithSpark {
@@ -39,8 +40,89 @@ object IcebergWithSpark {
 
     val spark = SparkSession.builder.config(sc.getConf).getOrCreate()
 
-    // spark now configured to use iceberg
+    /* comment or uncomment methods you want below */
+
+    createTable(spark)
+
+    writeData(spark)
+
+    // addColumn(spark)
+    // addDataWithNewColumn(spark)
+    // changePartitioning(spark)
+
+    readData(spark)
+
+    // dropTable(spark)
 
     sc.stop()
+  }
+
+  def createTable(spark: SparkSession) = {
+    spark.sql("""
+      CREATE TABLE IF NOT EXISTS my_iceberg_catalog.db.vaccinations (
+        location string,
+        date date,
+        vaccine string,
+        source_url string,
+        total_vaccinations bigint,
+        people_vaccinated bigint,
+        people_fully_vaccinated bigint,
+        total_boosters bigint
+      ) USING iceberg PARTITIONED BY (location, date)"""
+    )
+  }
+
+  def dropTable(spark: SparkSession) = {
+    spark.sql("TRUNCATE TABLE my_iceberg_catalog.db.vaccinations;")
+    spark.sql("DROP TABLE my_iceberg_catalog.db.vaccinations;")
+  }
+
+  def writeData(spark: SparkSession) = {
+    val path: String = getClass.getResource("/covid19-vaccinations-country-data/Belgium.csv").getPath
+
+    val vaccinations: DataFrame = spark.read
+      .option("header", "true")
+      .option("inferSchema", "true")
+      .csv(path)
+
+    vaccinations
+      .withColumn("date", to_date(col("date")))
+      .writeTo("my_iceberg_catalog.db.vaccinations")
+      .append()
+  }
+
+  def readData(spark: SparkSession) = {
+    val vaccinations = spark.table("my_iceberg_catalog.db.vaccinations")
+    vaccinations.show(10)
+  }
+
+  def addColumn(spark: SparkSession) = {
+    spark.sql("""
+        ALTER TABLE my_iceberg_catalog.db.vaccinations
+        ADD COLUMN people_fully_vaccinated_percentage double
+      """
+    )
+  }
+
+  def addDataWithNewColumn(spark: SparkSession) = {
+    val path: String = getClass.getResource("/covid19-vaccinations-country-data/Spain.csv").getPath
+
+    val spainVaccinations: DataFrame = spark.read
+      .option("header", "true")
+      .option("inferSchema", "true")
+      .csv(path)
+
+    spainVaccinations
+      .withColumn("date", to_date(col("date")))
+      .withColumn("people_fully_vaccinated_percentage", (col("people_fully_vaccinated") / col("people_vaccinated")) * 100)
+      .writeTo("my_iceberg_catalog.db.vaccinations")
+      .append()
+  }
+
+  def changePartitioning(spark: SparkSession) = {
+    spark.sql("ALTER TABLE my_iceberg_catalog.db.vaccinations DROP PARTITION FIELD date")
+    spark.sql("ALTER TABLE my_iceberg_catalog.db.vaccinations ADD PARTITION FIELD months(date)")
+
+    // new data added will be partitioned by month
   }
 }
