@@ -13,8 +13,8 @@
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <scala-major.version>2.12</scala-major.version>
-        <scala.exact.version>2.12.15</scala.exact.version>
+        <scala-major.version>2.13</scala-major.version>
+        <scala.exact.version>2.13.10</scala.exact.version>
 
         <spark-major.version>3.2</spark-major.version>
         <spark-exact.version>3.2.2</spark-exact.version>
