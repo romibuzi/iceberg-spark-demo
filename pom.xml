@@ -18,9 +18,9 @@
         <scala-collection-compact.version>2.9.0</scala-collection-compact.version>
 
         <spark-major.version>3.2</spark-major.version>
-        <spark-exact.version>3.2.2</spark-exact.version>
+        <spark-exact.version>3.2.4</spark-exact.version>
 
-        <iceberg.version>1.2.0</iceberg.version>
+        <iceberg.version>1.3.0</iceberg.version>
         <aws.version>2.18.41</aws.version>
         <postgresql.version>42.5.1</postgresql.version>
     </properties>
