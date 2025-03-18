@@ -14,15 +14,15 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <scala-major.version>2.13</scala-major.version>
-        <scala-exact.version>2.13.10</scala-exact.version>
-        <scala-collection-compact.version>2.9.0</scala-collection-compact.version>
+        <scala-exact.version>2.13.16</scala-exact.version>
+        <scala-collection-compact.version>2.13.0</scala-collection-compact.version>
 
-        <spark-major.version>3.2</spark-major.version>
-        <spark-exact.version>3.2.4</spark-exact.version>
+        <spark-major.version>3.4</spark-major.version>
+        <spark-exact.version>3.4.4</spark-exact.version>
 
-        <iceberg.version>1.4.2</iceberg.version>
-        <aws.version>2.18.41</aws.version>
-        <postgresql.version>42.5.1</postgresql.version>
+        <iceberg.version>1.8.1</iceberg.version>
+        <aws.version>2.31.1</aws.version>
+        <postgresql.version>42.7.5</postgresql.version>
     </properties>
 
     <dependencies>
